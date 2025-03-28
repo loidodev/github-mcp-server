@@ -1,10 +1,13 @@
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 
+// Note: We are defining input schemas using plain objects that conform
+// to a JSON Schema-like structure expected by the Tool type, not using Zod directly here.
+
 export const toolSchemas: Tool[] = [
   {
     name: "git_status",
     description: "Shows the working tree status",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -13,16 +16,12 @@ export const toolSchemas: Tool[] = [
         },
       },
       required: ["repo_path"],
-    },
-    returns: {
-      type: "string",
-      description: "Current status of working directory as text output",
     },
   },
   {
     name: "git_diff_unstaged",
     description: "Shows changes in working directory not yet staged",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -31,16 +30,12 @@ export const toolSchemas: Tool[] = [
         },
       },
       required: ["repo_path"],
-    },
-    returns: {
-      type: "string",
-      description: "Diff output of unstaged changes",
     },
   },
   {
     name: "git_diff_staged",
     description: "Shows changes that are staged for commit",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -50,15 +45,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path"],
     },
-    returns: {
-      type: "string",
-      description: "Diff output of staged changes",
-    },
   },
   {
     name: "git_diff",
     description: "Shows differences between branches or commits",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -72,15 +63,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path", "target"],
     },
-    returns: {
-      type: "string",
-      description: "Diff output comparing current state with target",
-    },
   },
   {
     name: "git_commit",
     description: "Records changes to the repository",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -94,15 +81,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path", "message"],
     },
-    returns: {
-      type: "string",
-      description: "Confirmation with new commit hash",
-    },
   },
   {
     name: "git_add",
     description: "Adds file contents to the staging area",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -119,15 +102,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path", "files"],
     },
-    returns: {
-      type: "string",
-      description: "Confirmation of staged files",
-    },
   },
   {
     name: "git_reset",
     description: "Unstages all staged changes",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -137,15 +116,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path"],
     },
-    returns: {
-      type: "string",
-      description: "Confirmation of reset operation",
-    },
   },
   {
     name: "git_log",
     description: "Shows the commit logs",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -153,43 +128,17 @@ export const toolSchemas: Tool[] = [
           description: "Path to Git repository",
         },
         max_count: {
-          type: "number",
+          type: "number", // JSON Schema uses 'number'
           description: "Maximum number of commits to show (default: 10)",
         },
       },
-      required: ["repo_path"],
-    },
-    returns: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          hash: {
-            type: "string",
-            description: "Commit hash",
-          },
-          author: {
-            type: "string",
-            description: "Author of the commit",
-          },
-          date: {
-            type: "string",
-            description: "Date of the commit",
-          },
-          message: {
-            type: "string",
-            description: "Commit message",
-          },
-        },
-      },
-      description:
-        "Array of commit entries with hash, author, date, and message",
+      required: ["repo_path"], // max_count is optional, so not in required
     },
   },
   {
     name: "git_create_branch",
     description: "Creates a new branch",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -202,20 +151,17 @@ export const toolSchemas: Tool[] = [
         },
         start_point: {
           type: "string",
-          description: "Starting point for the new branch",
+          description:
+            "Starting point for the new branch (commit hash, branch name, etc.)",
         },
       },
-      required: ["repo_path", "branch_name"],
-    },
-    returns: {
-      type: "string",
-      description: "Confirmation of branch creation",
+      required: ["repo_path", "branch_name"], // start_point is optional
     },
   },
   {
     name: "git_checkout",
-    description: "Switches branches",
-    parameters: {
+    description: "Switches branches or restores working tree files",
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -229,15 +175,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path", "branch_name"],
     },
-    returns: {
-      type: "string",
-      description: "Confirmation of branch switch",
-    },
   },
   {
     name: "git_show",
-    description: "Shows the contents of a commit",
-    parameters: {
+    description: "Shows various types of objects (commits, tags, etc.)",
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -251,15 +193,11 @@ export const toolSchemas: Tool[] = [
       },
       required: ["repo_path", "revision"],
     },
-    returns: {
-      type: "string",
-      description: "Contents of the specified commit",
-    },
   },
   {
     name: "git_init",
     description: "Initializes a Git repository",
-    parameters: {
+    inputSchema: {
       type: "object",
       properties: {
         repo_path: {
@@ -268,10 +206,6 @@ export const toolSchemas: Tool[] = [
         },
       },
       required: ["repo_path"],
-    },
-    returns: {
-      type: "string",
-      description: "Confirmation of repository initialization",
     },
   },
 ];

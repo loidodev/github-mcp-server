@@ -13,7 +13,7 @@ export class GitHubServer {
   private server: Server;
   private handlers: GitHubHandlers;
 
-  constructor(githubToken: string) {
+  constructor() {
     this.server = new Server(
       {
         name: "github-mcp-server",
@@ -21,7 +21,10 @@ export class GitHubServer {
         description: "MCP Server for interacting with the GitHub API",
       },
       {
-        capabilities: {},
+        capabilities: {
+          resources: {},
+          tools: {},
+        },
       }
     );
 
@@ -41,80 +44,79 @@ export class GitHubServer {
     }));
 
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      switch (request.params.name) {
+      const toolName = request.params.name;
+      const args = request.params.arguments;
+
+      switch (toolName) {
         case "git_status":
           return {
-            result: this.handlers.gitStatus(request.params.params.repo_path),
+            result: this.handlers.gitStatus((args as any).repo_path),
           };
         case "git_diff_unstaged":
           return {
-            result: this.handlers.gitDiffUnstaged(
-              request.params.params.repo_path
-            ),
+            result: this.handlers.gitDiffUnstaged((args as any).repo_path),
           };
         case "git_diff_staged":
           return {
-            result: this.handlers.gitDiffStaged(
-              request.params.params.repo_path
-            ),
+            result: this.handlers.gitDiffStaged((args as any).repo_path),
           };
         case "git_diff":
           return {
             result: this.handlers.gitDiff(
-              request.params.params.repo_path,
-              request.params.params.target
+              (args as any).repo_path,
+              (args as any).target
             ),
           };
         case "git_commit":
           return {
             result: this.handlers.gitCommit(
-              request.params.params.repo_path,
-              request.params.params.message
+              (args as any).repo_path,
+              (args as any).message
             ),
           };
         case "git_add":
           return {
             result: this.handlers.gitAdd(
-              request.params.params.repo_path,
-              request.params.params.files
+              (args as any).repo_path,
+              (args as any).files
             ),
           };
         case "git_reset":
           return {
-            result: this.handlers.gitReset(request.params.params.repo_path),
+            result: this.handlers.gitReset((args as any).repo_path),
           };
         case "git_log":
           return {
             result: this.handlers.gitLog(
-              request.params.params.repo_path,
-              request.params.params.max_count
+              (args as any).repo_path,
+              (args as any).max_count
             ),
           };
         case "git_create_branch":
           return {
             result: this.handlers.gitCreateBranch(
-              request.params.params.repo_path,
-              request.params.params.branch_name,
-              request.params.params.start_point
+              (args as any).repo_path,
+              (args as any).branch_name,
+              (args as any).start_point
             ),
           };
         case "git_checkout":
           return {
             result: this.handlers.gitCheckout(
-              request.params.params.repo_path,
-              request.params.params.branch_name
+              (args as any).repo_path,
+              (args as any).branch_name
             ),
           };
         case "git_show":
           return {
             result: this.handlers.gitShow(
-              request.params.params.repo_path,
-              request.params.params.revision
+              (args as any).repo_path,
+              (args as any).revision
             ),
           };
         case "git_init":
           return {
-            result: this.handlers.gitInit(request.params.params.repo_path),
+            result: this.handlers.gitInit((args as any).repo_path),
           };
         default:
           throw new McpError(

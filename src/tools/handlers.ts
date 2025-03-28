@@ -105,10 +105,10 @@ export class GitHubHandlers {
    */
   gitCommit(repo_path: string, message: string): string {
     this.validateRepoPath(repo_path);
-    this.executeGitCommand(repo_path, ["commit", "-m", message]);
+    this.executeGitCommand(repo_path, ["commit", "-a", "-m", message]);
     // Get the hash of the new commit
-    const hash = this.executeGitCommand(repo_path, ["rev-parse", "HEAD"]);
-    return `Successfully committed changes with hash: ${hash}`;
+    // const hash = this.executeGitCommand(repo_path, ["rev-parse", "HEAD"]);
+    return `Successfully committed with message: ${message}`;
   }
 
   /**
