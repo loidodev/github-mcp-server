@@ -76,10 +76,7 @@ export class GitHubServer {
           };
         case "git_add":
           return {
-            result: this.handlers.gitAdd(
-              (args as any).repo_path,
-              (args as any).files
-            ),
+            result: this.handlers.gitAdd((args as any).repo_path),
           };
         case "git_reset":
           return {

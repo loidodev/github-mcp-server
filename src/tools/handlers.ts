@@ -114,13 +114,12 @@ export class GitHubHandlers {
   /**
    * Adds file contents to the staging area
    * @param repo_path Path to the git repository
-   * @param files Array of file paths to stage
    * @returns Confirmation of staged files
    */
-  gitAdd(repo_path: string, files: string[]): string {
+  gitAdd(repo_path: string): string {
     this.validateRepoPath(repo_path);
-    this.executeGitCommand(repo_path, ["add", ...files]);
-    return `Successfully staged ${files.length} file(s): ${files.join(", ")}`;
+    this.executeGitCommand(repo_path, ["add ."]);
+    return `Successfully staged all changes`;
   }
 
   /**
@@ -142,12 +141,7 @@ export class GitHubHandlers {
    */
   gitLog(repo_path: string, max_count: number = 10): any[] {
     this.validateRepoPath(repo_path);
-    const format = "%H|%an|%ad|%s";
-    const output = this.executeGitCommand(repo_path, [
-      "log",
-      `-${max_count}`,
-      `--pretty=format:${format}`,
-    ]);
+    const output = this.executeGitCommand(repo_path, ["log", `-${max_count}`]);
 
     if (!output) {
       return [];
